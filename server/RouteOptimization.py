@@ -312,51 +312,102 @@ class Algorithm:
         self.totalNumberOfParcelsLeft = map.returnTotalNumberOfParcels()
 
         lastVisited = None
+        visiting = deque([clusters.popleft()])
 
-        for c in clusters:
-            print(c.nodes, "\n")
-            if c in self.visited:
-                continue
-            else:
-                if clusterNumber == 1:
-                    data = {
-                        "clusterNumber": clusterNumber,
-                        "cluster": c.returnInListFormat(),
-                        "minimumDistance": 0,
-                        "centre": c.returnCentreOfCluster()
-                    }
+        while visiting:
 
-                    clusterNumber += 1
-                    self.visited.add(c)
-                    lastVisited = c     
-                    path.append(data)
+            minDistance = float('inf')
+            maxDistance = float('-inf')
+            minCluster = None
 
-
-                clusterDetails = self.heuristicFunction(map, c)
-
-                if (clusterDetails[0] == None):
-                    data = {
-                        "clusterNumber": clusterNumber,
-                        "cluster": c.returnInListFormat(),
-                        "minimumDistance": self.distanceBetweenCluster(lastVisited.returnCentreOfCluster(), c.returnCentreOfCluster()),
-                        "centre": c.returnCentreOfCluster()
-                    }
-
-                    clusterNumber += 1
-                    self.visited.add(c)
-                    path.append(data)
-                    break
-
+            if lastVisited == None:
+                lastVisited = visiting.popleft()
                 data = {
                     "clusterNumber": clusterNumber,
-                    "cluster": clusterDetails[0].returnInListFormat(),
-                    "minimumDistance": clusterDetails[1],
-                    "centre": clusterDetails[0].returnCentreOfCluster()
+                    "cluster": lastVisited.returnInListFormat(),
+                    "minimumDistance": 0,
+                    "centre": lastVisited.returnCentreOfCluster()
                 }
-
                 clusterNumber += 1
-                lastVisited = clusterDetails[0]
+                self.visited.add(lastVisited) 
                 path.append(data)
+
+            for c in clusters:
+                if (not (c in self.visited)) and (not (c == lastVisited)):
+                    distance = self.distanceBetweenCluster(lastVisited.returnCentreOfCluster(), c.returnCentreOfCluster())
+
+                    if distance > maxDistance:
+                        maxDistance = distance
+                
+                    if distance < minDistance:
+                        minDistance = distance
+                        minCluster = c
+        
+            self.visited.add(lastVisited)
+
+            if minCluster == None:
+                break
+
+            data = {
+                "clusterNumber": clusterNumber,
+                "cluster": minCluster.returnInListFormat(),
+                "minimumDistance": minDistance,
+                "centre": minCluster.returnCentreOfCluster()
+            }
+
+            clusterNumber += 1
+            self.visited.add(minCluster)
+            lastVisited = minCluster    
+            path.append(data)
+            if not (minCluster == None):
+                visiting.append(minCluster)
+            
+
+
+        # for c in clusters:
+        #     print(c.nodes, "\n")
+        #     if c in self.visited:
+        #         continue
+        #     else:
+        #         if clusterNumber == 1:
+        #             data = {
+        #                 "clusterNumber": clusterNumber,
+        #                 "cluster": c.returnInListFormat(),
+        #                 "minimumDistance": 0,
+        #                 "centre": c.returnCentreOfCluster()
+        #             }
+
+        #             clusterNumber += 1
+        #             self.visited.add(c)
+        #             lastVisited = c     
+        #             path.append(data)
+
+
+        #         clusterDetails = self.heuristicFunction(map, c)
+
+        #         if (clusterDetails[0] == None):
+        #             data = {
+        #                 "clusterNumber": clusterNumber,
+        #                 "cluster": c.returnInListFormat(),
+        #                 "minimumDistance": self.distanceBetweenCluster(lastVisited.returnCentreOfCluster(), c.returnCentreOfCluster()),
+        #                 "centre": c.returnCentreOfCluster()
+        #             }
+
+        #             clusterNumber += 1
+        #             self.visited.add(c)
+        #             path.append(data)
+        #             break
+
+        #         data = {
+        #             "clusterNumber": clusterNumber,
+        #             "cluster": clusterDetails[0].returnInListFormat(),
+        #             "minimumDistance": clusterDetails[1],
+        #             "centre": clusterDetails[0].returnCentreOfCluster()
+        #         }
+
+        #         clusterNumber += 1
+        #         lastVisited = clusterDetails[0]
+        #         path.append(data)
         
         return path
 
