@@ -59,6 +59,14 @@ class Map:
     def returnClusters(self):
         return self.clusters
     
+    def returnTotalNumberOfParcels(self):
+        totalParcels = 0
+
+        for c in self.clusters:
+            totalParcels += c.returnTotalNumberOfParcels()
+
+        return totalParcels
+    
 # A cluster of Nodes
 class Cluster:
     nodes = deque([])
@@ -141,6 +149,14 @@ class Cluster:
             i += 1
         
         return clusterInDictionaryFormat
+    
+    def returnInListFormat(self):
+        clusterInListForm = []
+
+        for node in self.nodes:
+            clusterInListForm.append(node.returnInDictionaryFormat())
+        
+        return clusterInListForm
         
 
 # Points on Map
@@ -169,8 +185,8 @@ class Node:
     
     def returnInDictionaryFormat(self):
         return { 
-            "latitude": self.latitude, 
-            "longitude": self.longitude 
+            "lat": self.latitude, 
+            "lng": self.longitude 
         }
 
 class MapData:
@@ -214,6 +230,7 @@ class MapData:
 class Algorithm:
 
     visited = set()
+    totalNumberOfParcelsLeft = 0
 
     def __init__(self):
         pass
@@ -275,15 +292,18 @@ class Algorithm:
     def runAlgorithm(self, map):
         clusters = map.returnClusters()
         #print(clusters)
+
         path = []
         clusterNumber = 1
+
         self.visited = set()
+        self.totalNumberOfParcelsLeft = map.returnTotalNumberOfParcels()
 
         for c in clusters:
             clusterDetails = self.heuristicFunction(map, c)
             c = {
                 "clusterNumber": clusterNumber,
-                "cluster": clusterDetails[0].returnInDictionaryFormat(),
+                "cluster": clusterDetails[0].returnInListFormat(),
                 "minimumDistance": clusterDetails[1],
                 "centre": clusterDetails[0].returnCentreOfCluster()
             }
@@ -295,10 +315,11 @@ class Algorithm:
 
 
 def getAllClusterPaths():
-    map = Map("delivery_2022_12_14.csv", 2)
+    map = Map("dataset_50.csv", 1)
     algorithm = Algorithm()
     print("Working")
     path = algorithm.runAlgorithm(map)
+    print(path)
     return path
 
 #getAllClusterPaths()
