@@ -248,12 +248,14 @@ class Algorithm:
         return path
 
 
-map = Map("delivery_2022_12_14.csv", 2)
-algorithm = Algorithm()
-path = algorithm.runAlgorithm(map)
+def getAllClusterPaths():
+    map = Map("delivery_2022_12_14.csv", 2)
+    algorithm = Algorithm()
+    path = algorithm.runAlgorithm(map)
+    return path
 
-for p in path:
-    print(p[0].returnCentreOfCluster(), p[1])
+# for p in path:
+#     print(p[0].returnCentreOfCluster(), p[1])
                 
 
                 
