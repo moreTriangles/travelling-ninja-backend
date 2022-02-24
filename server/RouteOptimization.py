@@ -223,6 +223,24 @@ class Algorithm:
         #response = urllib.request.urlopen(tempUrl)
         #result = json.load(response)
         #pprint(result)
+        #return random() * 1000
+        # approxRadiusOfEarth = 6373.0
+
+        # point1Latitude = radians(clusterOne[0])
+        # point1Longitude = radians(clusterOne[1])
+
+        # point2Latitude = radians(clusterTwo[0])
+        # point2Longitude = radians(clusterTwo[1])
+
+        # differenceInLatitude = point2Latitude - point1Latitude
+        # differenceInLongitude = point2Longitude - point1Longitude
+
+        # temp = (sin(differenceInLatitude / 2) **  2) + (cos(point1Latitude) * cos(point2Latitude)) * (sin(differenceInLongitude / 2) ** 2)
+        # distanceInCoordinates = 2 * atan2(sqrt(temp), sqrt(1 - temp))
+
+        # distanceInKM = approxRadiusOfEarth * distanceInCoordinates
+
+        # return distanceInKM
         return random() * 1000
     
     def heuristicFunction(self, map, cluster):
@@ -259,7 +277,8 @@ class Algorithm:
 
             c = {
                 "cluster": clusterDetails[0].returnInDictionaryFormat(),
-                "minimumDistance": clusterDetails[1]
+                "minimumDistance": clusterDetails[1],
+                "centre": clusterDetails[0].returnCentreOfCluster()
             }
 
             path.append(c)
@@ -267,7 +286,7 @@ class Algorithm:
         return path
 
 
-map = Map("delivery_2022_12_14.csv", 15)
+map = Map("delivery_2022_12_14.csv", 3)
 algorithm = Algorithm()
 path = algorithm.runAlgorithm(map)
 
