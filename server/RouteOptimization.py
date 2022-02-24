@@ -21,25 +21,21 @@ format = "origins=40.6655101%2C-73.89188969999998&destinations=40.659569%2C-73.9
 # A cluster of clusters
 class Map:
     clusters = deque([])
-    seenNodes = set()
+    seenNodes = dict()
 
     def __init__(self, fileName, radius):
         mapData = MapData(fileName)
         latitudes = mapData.returnLatitudes()
         longitudes = mapData.returnLongitudes()
 
-        #allNodes = deque([])
-
         for i in range(0, len(latitudes)):
             node = Node(latitudes[i], longitudes[i])
 
             if (node.returnLatitude(), node.returnLongitude()) in self.seenNodes:
-                node.incrementParcels()
+                self.seenNodes[(node.returnLatitude(), node.returnLongitude())].incrementParcels()
                 continue
             else:
-                self.seenNodes.add((node.returnLatitude(), node.returnLongitude()))
-
-            #allNodes.append(node)
+                self.seenNodes[(node.returnLatitude(), node.returnLongitude())] = node
         
             if len(self.clusters) == 0:
                 cluster = Cluster(node, radius)
@@ -260,16 +256,18 @@ class Algorithm:
 
         for c in clusters:
             clusterDetails = self.heuristicFunction(map, c)
+
             c = {
                 "cluster": clusterDetails[0].returnInDictionaryFormat(),
                 "minimumDistance": clusterDetails[1]
             }
+
             path.append(c)
         
         return path
 
 
-map = Map("delivery_2022_12_14.csv", 5)
+map = Map("delivery_2022_12_14.csv", 15)
 algorithm = Algorithm()
 path = algorithm.runAlgorithm(map)
 
