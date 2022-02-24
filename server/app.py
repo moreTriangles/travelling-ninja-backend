@@ -9,9 +9,13 @@ from werkzeug.utils import secure_filename
 from image_recognition import verify_location
 from flask_cors import CORS
 
+from logging import FileHandler,WARNING
+
 def create_app():
     UPLOAD_FOLDER = "server/images"
-    app = Flask(__name__)
+    app = Flask(__name__, template_folder="template")
+    file_handler = FileHandler('errorlog.txt')
+    file_handler.setLevel(WARNING)
     CORS(app)
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     
@@ -19,11 +23,11 @@ def create_app():
     def index():
         return 'hi travelling ninja'
     
-    # @app.route('/getAllClusters')
-    # def getAllClusters():
-    #     res = make_response(json.dumps(getAllClusterPaths()))
-    #     res.headers.add("Access-Control-Allow-Origin", "*")
-    #     return res
+    @app.route('/getAllClusters')
+    def getAllClusters():
+        res = make_response(json.dumps(getAllClusterPaths()))
+        res.headers.add("Access-Control-Allow-Origin", "*")
+        return res
     
     @app.route('/verifyAWB', methods=['POST'])
     def verifyAWB():

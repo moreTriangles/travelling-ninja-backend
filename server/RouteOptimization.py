@@ -10,7 +10,7 @@ import urllib.parse
 from math import sin, cos, sqrt, atan2, radians
 #import geopy.distance
 
-apiKey = "AIzaSyBT-PLMwvnxCHS3ABKjjIwu4nRiydpe01c"
+apiKey = "AIzaSyCv1a4Zb7M_5mmZ4KRLgd2LoKar_QU3OvY"
 url = "https://maps.googleapis.com/maps/api/distancematrix/json?"
 
 payload={}
@@ -255,7 +255,7 @@ class Algorithm:
         maxNumberOfParcels = float('-inf')
 
         for c in clusters:
-            if c not in self.visited:
+            if c not in self.visited and (not c == cluster):
                 distance = self.distanceBetweenCluster(cluster.returnCentreOfCluster(), c.returnCentreOfCluster())
 
                 if distance > maxDistance:
@@ -270,35 +270,35 @@ class Algorithm:
     
     def runAlgorithm(self, map):
         clusters = map.returnClusters()
+        #print(clusters)
         path = []
+        clusterNumber = 1
+        self.visited = set()
 
         for c in clusters:
             clusterDetails = self.heuristicFunction(map, c)
 
             c = {
+                "clusterNumber": clusterNumber,
                 "cluster": clusterDetails[0].returnInDictionaryFormat(),
                 "minimumDistance": clusterDetails[1],
                 "centre": clusterDetails[0].returnCentreOfCluster()
             }
 
+            clusterNumber += 1
             path.append(c)
         
         return path
 
 
-<<<<<<< HEAD
-map = Map("delivery_2022_12_14.csv", 3)
-algorithm = Algorithm()
-path = algorithm.runAlgorithm(map)
-
-print(path)
-=======
 def getAllClusterPaths():
     map = Map("delivery_2022_12_14.csv", 2)
     algorithm = Algorithm()
+    print("Working")
     path = algorithm.runAlgorithm(map)
     return path
->>>>>>> f257174828998679ca80a3431872193c891300ac
+
+#getAllClusterPaths()
 
 # for p in path:
 #     print(p[0].returnCentreOfCluster(), p[1])
