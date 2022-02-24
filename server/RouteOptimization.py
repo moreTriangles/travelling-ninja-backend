@@ -286,11 +286,19 @@ class Algorithm:
         return path
 
 
+<<<<<<< HEAD
 map = Map("delivery_2022_12_14.csv", 3)
 algorithm = Algorithm()
 path = algorithm.runAlgorithm(map)
 
 print(path)
+=======
+def getAllClusterPaths():
+    map = Map("delivery_2022_12_14.csv", 2)
+    algorithm = Algorithm()
+    path = algorithm.runAlgorithm(map)
+    return path
+>>>>>>> f257174828998679ca80a3431872193c891300ac
 
 # for p in path:
 #     print(p[0].returnCentreOfCluster(), p[1])
