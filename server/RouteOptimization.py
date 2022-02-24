@@ -135,6 +135,16 @@ class Cluster:
         distanceInKM = approxRadiusOfEarth * distanceInCoordinates
         # If true, can add new node
         return distanceInKM <= self.radiusOfCluster
+    
+    def returnInDictionaryFormat(self):
+        clusterInDictionaryFormat = dict()
+        i = 0
+
+        for node in self.nodes:
+            clusterInDictionaryFormat[i] = node.returnInDictionaryFormat()
+            i += 1
+        
+        return clusterInDictionaryFormat
         
 
 # Points on Map
@@ -160,6 +170,12 @@ class Node:
     
     def incrementParcels(self):
         self.parcels += 1
+    
+    def returnInDictionaryFormat(self):
+        return { 
+            "latitude": self.latitude, 
+            "longitude": self.longitude 
+        }
 
 class MapData:
     
@@ -235,25 +251,32 @@ class Algorithm:
                     minDistance = distance
                     minCluster = c
         
-        self.visited.add(c)
-        return (c, minDistance)
+        self.visited.add(minCluster)
+        return (minCluster, minDistance)
     
     def runAlgorithm(self, map):
         clusters = map.returnClusters()
-        path = deque([])
+        path = []
 
         for c in clusters:
-            path.append(self.heuristicFunction(map, c))
+            clusterDetails = self.heuristicFunction(map, c)
+            c = {
+                "cluster": clusterDetails[0].returnInDictionaryFormat(),
+                "minimumDistance": clusterDetails[1]
+            }
+            path.append(c)
         
         return path
 
 
-map = Map("delivery_2022_12_14.csv", 2)
+map = Map("delivery_2022_12_14.csv", 5)
 algorithm = Algorithm()
 path = algorithm.runAlgorithm(map)
 
-for p in path:
-    print(p[0].returnCentreOfCluster(), p[1])
+print(path)
+
+# for p in path:
+#     print(p[0].returnCentreOfCluster(), p[1])
                 
 
                 
