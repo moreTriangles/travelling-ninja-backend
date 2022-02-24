@@ -415,9 +415,7 @@ class Algorithm:
 def getAllClusterPaths():
     map = Map("dataset_50.csv", 1)
     algorithm = Algorithm()
-    print("Working")
     path = algorithm.runAlgorithm(map)
-    #print(path)
     return path
 
 #getAllClusterPaths()

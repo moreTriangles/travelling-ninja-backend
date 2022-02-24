@@ -31,7 +31,7 @@ def create_app():
     
     @app.route('/verifyAWB', methods=['POST'])
     def verifyAWB():
-        # print(request.files)
+        print(request.files)
         if request.method == 'POST':
             if 'image' not in request.files:
                 return 'No files'
@@ -41,7 +41,7 @@ def create_app():
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         res = verify_AWB(app.config['UPLOAD_FOLDER'] + "/" + filename)
-        res = make_response(res)
+        res = make_response(json.dumps(res))
         res.headers.add("Access-Control-Allow-Origin", "*")
         res.headers.add("Access-Control-Allow-Credentials", "true")
         res.headers.add("Access-Control-Allow-Methods", "GET, POST")

@@ -1,6 +1,7 @@
 import base64
 from re import X
 from matplotlib import image
+import matplotlib
 import requests
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
@@ -10,7 +11,7 @@ from io import BytesIO, BufferedReader
 
 api_url = 'https://api.api-ninjas.com/v1/imagetotext'
 x_api_key = 'bHX2F/Str6Qo+AT8Cga0Lg==vqiiSWwHgXFs8pqK'
-
+matplotlib.use('Agg')
 
 def verify_AWB(file):
     image_file_descriptor = open(file, 'rb')
