@@ -27,31 +27,40 @@ class Map:
         mapData = MapData(fileName)
         latitudes = mapData.returnLatitudes()
         longitudes = mapData.returnLongitudes()
+        #print(len(latitudes))
 
         for i in range(0, len(latitudes)):
+            #print(i, latitudes[i], longitudes[i], "\n")
+
             node = Node(latitudes[i], longitudes[i])
 
             if (node.returnLatitude(), node.returnLongitude()) in self.seenNodes:
+                #print("is seen \n")
                 self.seenNodes[(node.returnLatitude(), node.returnLongitude())].incrementParcels()
                 continue
             else:
                 self.seenNodes[(node.returnLatitude(), node.returnLongitude())] = node
+                #print("is not seen \n")
         
-            if len(self.clusters) == 0:
-                cluster = Cluster(node, radius)
-                self.clusters.append(cluster)
-            else:
-                foundClusterForNode = False
-
-                for c in self.clusters:
-                    if c.isValidClusterForNode(node) and (not foundClusterForNode):
-                        c.addNewNodeToCluster(node)
-                        foundClusterForNode = True
-                        continue
-                
-                if not foundClusterForNode:
+                if len(self.clusters) == 0:
+                    #print("empty length of all clusters \n")
                     cluster = Cluster(node, radius)
                     self.clusters.append(cluster)
+                else:
+                    #print("Clusters alrd there \n")
+                    foundClusterForNode = False
+
+                    for c in self.clusters:
+                        if c.isValidClusterForNode(node) and (not foundClusterForNode):
+                            #print("Adding to existing cluster \n")
+                            c.addNewNodeToCluster(node)
+                            foundClusterForNode = True
+                            break
+                
+                    if not foundClusterForNode:
+                        #print("Could not add, creating new cluster \n")
+                        cluster = Cluster(node, radius)
+                        self.clusters.append(cluster)
         
     def addNewCluster(self, cluster):
         self.clusters.append(cluster)
@@ -74,13 +83,14 @@ class Cluster:
     centreOfCluster = (0, 0)
 
     def __init__(self, node, radius):
+        self.nodes = deque([])
         self.nodes.append(node)
         self.radiusOfCluster = radius
         self.calculateClusterCentre()
 
     def addNewNodeToCluster(self, node):
         self.nodes.append(node)
-        self.calculateClusterCentre()
+        #self.calculateClusterCentre()
     
     def returnNodesOfTheCluster(self):
         return self.nodes
@@ -262,7 +272,7 @@ class Algorithm:
         # distanceInKM = approxRadiusOfEarth * distanceInCoordinates
 
         # return distanceInKM
-        # return random() * 1000
+        #return random() * 1000
     
     def heuristicFunction(self, map, cluster):
         clusters = map.returnClusters()
@@ -270,13 +280,13 @@ class Algorithm:
         minDistance = float('inf')
         maxDistance = float('-inf')
 
-        minCluster = clusters[0]
+        minCluster = None
 
         minNumberOfParcels = float('inf')
         maxNumberOfParcels = float('-inf')
 
         for c in clusters:
-            if c not in self.visited and (not c == cluster):
+            if (not (c in self.visited)) and (not (c == cluster)):
                 distance = self.distanceBetweenCluster(cluster.returnCentreOfCluster(), c.returnCentreOfCluster())
 
                 if distance > maxDistance:
@@ -287,6 +297,7 @@ class Algorithm:
                     minCluster = c
         
         self.visited.add(minCluster)
+        self.visited.add(cluster)
         return (minCluster, minDistance)
     
     def runAlgorithm(self, map):
@@ -297,19 +308,55 @@ class Algorithm:
         clusterNumber = 1
 
         self.visited = set()
+        
         self.totalNumberOfParcelsLeft = map.returnTotalNumberOfParcels()
 
-        for c in clusters:
-            clusterDetails = self.heuristicFunction(map, c)
-            c = {
-                "clusterNumber": clusterNumber,
-                "cluster": clusterDetails[0].returnInListFormat(),
-                "minimumDistance": clusterDetails[1],
-                "centre": clusterDetails[0].returnCentreOfCluster()
-            }
+        lastVisited = None
 
-            clusterNumber += 1
-            path.append(c)
+        for c in clusters:
+            print(c.nodes, "\n")
+            if c in self.visited:
+                continue
+            else:
+                if clusterNumber == 1:
+                    data = {
+                        "clusterNumber": clusterNumber,
+                        "cluster": c.returnInListFormat(),
+                        "minimumDistance": 0,
+                        "centre": c.returnCentreOfCluster()
+                    }
+
+                    clusterNumber += 1
+                    self.visited.add(c)
+                    lastVisited = c     
+                    path.append(data)
+
+
+                clusterDetails = self.heuristicFunction(map, c)
+
+                if (clusterDetails[0] == None):
+                    data = {
+                        "clusterNumber": clusterNumber,
+                        "cluster": c.returnInListFormat(),
+                        "minimumDistance": self.distanceBetweenCluster(lastVisited.returnCentreOfCluster(), c.returnCentreOfCluster()),
+                        "centre": c.returnCentreOfCluster()
+                    }
+
+                    clusterNumber += 1
+                    self.visited.add(c)
+                    path.append(data)
+                    break
+
+                data = {
+                    "clusterNumber": clusterNumber,
+                    "cluster": clusterDetails[0].returnInListFormat(),
+                    "minimumDistance": clusterDetails[1],
+                    "centre": clusterDetails[0].returnCentreOfCluster()
+                }
+
+                clusterNumber += 1
+                lastVisited = clusterDetails[0]
+                path.append(data)
         
         return path
 
@@ -319,7 +366,7 @@ def getAllClusterPaths():
     algorithm = Algorithm()
     print("Working")
     path = algorithm.runAlgorithm(map)
-    print(path)
+    #print(path)
     return path
 
 #getAllClusterPaths()
