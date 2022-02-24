@@ -219,10 +219,14 @@ class Algorithm:
         pass
 
     def distanceBetweenCluster(self, clusterOne, clusterTwo):
-        #tempUrl = url + "origins=" + str(clusterOne[0]) + "%2C" + str(clusterOne[1]) + "&destinations=" + str(clusterTwo[0]) + "%2C" + str(clusterTwo[1]) + "&key=" + apiKey
-        #response = urllib.request.urlopen(tempUrl)
-        #result = json.load(response)
+        tempUrl = url + "origins=" + str(clusterOne[0]) + "%2C" + str(clusterOne[1]) + "&destinations=" + str(clusterTwo[0]) + "%2C" + str(clusterTwo[1]) + "&key=" + apiKey
+        response = urllib.request.urlopen(tempUrl)
+        result = json.load(response)
         #pprint(result)
+        distance = float(result['rows'][0]['elements'][0]['distance']['text'].split(" ")[0])
+        print(distance)
+        return distance
+
         #return random() * 1000
         # approxRadiusOfEarth = 6373.0
 
@@ -241,7 +245,7 @@ class Algorithm:
         # distanceInKM = approxRadiusOfEarth * distanceInCoordinates
 
         # return distanceInKM
-        return random() * 1000
+        # return random() * 1000
     
     def heuristicFunction(self, map, cluster):
         clusters = map.returnClusters()
