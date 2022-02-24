@@ -19,11 +19,11 @@ def create_app():
     def index():
         return 'hi travelling ninja'
     
-    # @app.route('/getAllClusters')
-    # def getAllClusters():
-    #     res = make_response(json.dumps(getAllClusterPaths()))
-    #     res.headers.add("Access-Control-Allow-Origin", "*")
-    #     return res
+    @app.route('/getAllClusters')
+    def getAllClusters():
+        res = make_response(json.dumps(getAllClusterPaths()))
+        res.headers.add("Access-Control-Allow-Origin", "*")
+        return res
     
     @app.route('/verifyAWB', methods=['POST'])
     def verifyAWB():
@@ -37,7 +37,7 @@ def create_app():
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         res = verify_AWB(app.config['UPLOAD_FOLDER'] + "/" + filename)
-        res = make_response((res))
+        res = make_response(res)
         res.headers.add("Access-Control-Allow-Origin", "*")
         res.headers.add("Access-Control-Allow-Credentials", "true")
         res.headers.add("Access-Control-Allow-Methods", "GET, POST")
