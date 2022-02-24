@@ -253,7 +253,7 @@ class Algorithm:
         minDistance = float('inf')
         maxDistance = float('-inf')
 
-        minCluster = None
+        minCluster = clusters[0]
 
         minNumberOfParcels = float('inf')
         maxNumberOfParcels = float('-inf')
@@ -281,7 +281,6 @@ class Algorithm:
 
         for c in clusters:
             clusterDetails = self.heuristicFunction(map, c)
-
             c = {
                 "clusterNumber": clusterNumber,
                 "cluster": clusterDetails[0].returnInDictionaryFormat(),
@@ -304,8 +303,6 @@ def getAllClusterPaths():
 
 #getAllClusterPaths()
 
-# for p in path:
-#     print(p[0].returnCentreOfCluster(), p[1])
                 
 
                 
